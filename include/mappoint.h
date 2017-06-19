@@ -8,7 +8,7 @@ class Frame;
 class MapPoint
 {
 public:
-	typedef std::shared_ptr<MapPoint> Ptr;
+	typedef shared_ptr<MapPoint> Ptr;
 	unsigned long id; // ID
 
 	MapPoint();

@@ -10,9 +10,9 @@ namespace slamar
 class Map
 {
 public:
-	typedef std::shared_ptr<Map> Ptr;
-	std::unordered_map<unsigned long, MapPoint::Ptr> map_points;
-	std::unordered_map<unsigned long, Frame::Ptr> keyframes;
+	typedef shared_ptr<Map> Ptr;
+	unordered_map<unsigned long, MapPoint::Ptr> map_points;
+	unordered_map<unsigned long, Frame::Ptr> keyframes;
 
 	Map() {}
 
