@@ -1,8 +1,6 @@
 #ifndef MAPPOINT_H
 #define MAPPOINT_H
 
-#include <memory>
-
 namespace slamar
 {
 class Frame;

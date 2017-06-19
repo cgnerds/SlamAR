@@ -1,6 +1,8 @@
 #ifndef FRAME_H
 #define FRAME_H
 
+#include "../include/common_include.h"
+
 namespace slamar
 {
 class MapPoint;
