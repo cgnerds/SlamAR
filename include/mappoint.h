@@ -8,12 +8,12 @@ class MapPoint
 {
 public:
 	typedef shared_ptr<MapPoint> Ptr;
-	unsigned long id;    // ID
-	Vector3d pos;        // Position in world
-	Vector3d norm;       // Normal of viewing direction
-	Mat descriptor;      // Descriptor for macthing
-	int observed_times;  // being observed by feature matching algo.
-	int correct_times;   // being an inliner in pose estimation
+	unsigned long id_;    // ID
+	Vector3d pos_;        // Position in world
+	Vector3d norm_;       // Normal of viewing direction
+	Mat descriptor_;      // Descriptor for macthing
+	int observed_times_;  // being observed by feature matching algo.
+	int correct_times_;   // being an inliner in pose estimation
 
 	MapPoint();
 	MapPoint(long id, Vector3d position, Vector3d norm);

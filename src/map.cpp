@@ -5,13 +5,13 @@ namespace slamar
 	void Map::insertKeyFrame(Frame::Ptr frame)
 	{
 		cout << "Key frame size = " << keyframes.size() << endl;
-		if (keyframes.find(frame->id) == keyframes.end())
+		if (keyframes.find(frame->id_) == keyframes.end())
 		{
-			keyframes.insert(make_pair(frame->id, frame);
+			keyframes.insert(make_pair(frame->id_, frame));
 		}
 		else
 		{
-			keyframes[frame->id] = frame;
+			keyframes[frame->id_] = frame;
 		}
 	}
 
