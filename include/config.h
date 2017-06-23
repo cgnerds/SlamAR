@@ -1,6 +1,6 @@
 #ifndef CONFIG_H
 
-#include "../include/common_include.h"
+#include "common_include.h"
 
 namespace slamar
 {

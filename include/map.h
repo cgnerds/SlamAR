@@ -1,7 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "../include/common_include.h"
+#include "common_include.h"
 #include "frame.h"
 #include "mappoint.h"
 
