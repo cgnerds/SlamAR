@@ -2,6 +2,7 @@
 #define FRAME_H
 
 #include "common_include.h"
+#include "camera.h"
 
 namespace slamar
 {
