@@ -14,4 +14,8 @@
 #include <map>
 using namespace std;
 
+// for cv
+#include <opencv2/core/core.hpp>
+using cv::Mat;
+
 #endif // !COMMON_INCLUDE_H
