@@ -7,8 +7,8 @@ namespace slamar
 class Config
 {
 private:
-	static std::shared_ptr<Config> config;
-	cv::FileStorage file;
+	static std::shared_ptr<Config> config_;
+	cv::FileStorage file_;
 
 	Config() {} // private constructor makes a singleton
 public:

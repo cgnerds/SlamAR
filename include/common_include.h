@@ -12,7 +12,7 @@ using Eigen::Vector3d;
 #include <sophus/se3.h>
 using Sophus::SE3;
 
-// for cv
+// for OpenCV
 #include <opencv2/core/core.hpp>
 using cv::Mat;
 
