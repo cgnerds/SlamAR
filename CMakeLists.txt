@@ -20,12 +20,27 @@ if(NOT OPENCV_FOUND)
     message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
   endif()
 endif()
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Eigen
 find_package(Eigen3 3.1.0 REQUIRED)
+
+# Sophus
+find_package(Sophus REQUIRED)
+include_directories( ${Sophus_INCLUDE_DIRS})
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
-${OpenCV_INCLUDE_DIRS})
+)
+
+set(THIRD_PARTY_LIBS
+${OpenCV_LIBS}
+${Sophus_LIBRARIES}
+)
+
+# source and test
+include_directories( ${PROJECT_SOURCE_DIR}/include)
+add_subdirectory( src )
+add_subdirectory( test )
