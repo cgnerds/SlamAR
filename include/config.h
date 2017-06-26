@@ -21,7 +21,7 @@ public:
 	template< typename T>
 	static T get(const std::string& key)
 	{
-		return T(Config::config->file[key]);
+		return T(Config::config_->file_[key]);
 	}
 };
 }

@@ -33,7 +33,7 @@ double Frame::findDepth(const cv::KeyPoint& kp)
 		int dy[4] = { 0,-1,0,1 };
 		for (int i = 0; i < 4; ++i)
 		{
-			d = depth_.ptr<ushotr>(y + dy[i])[x + dx[i]];
+			d = depth_.ptr<ushort>(y + dy[i])[x + dx[i]];
 			if (d != 0)
 			{
 				return double(d) / camera_->depth_scale_;
@@ -53,10 +53,10 @@ bool Frame::isInFrame(const Vector3d& pt_world)
 	Vector3d p_cam = camera_->world2camera(pt_world, T_c_w_);
 	if (p_cam(2, 0) < 0)
 		return false;
-	Vector3d pixel = camera_->world2pixel(pt_world, T_c_w_);
+	Vector2d pixel = camera_->world2pixel(pt_world, T_c_w_);
 	return pixel(0, 0) > 0 && pixel(1, 0) > 0
 		&& pixel(0, 0) < color_.cols
-		&& pixel(1, 0) < color_rows;
+		&& pixel(1, 0) < color_.rows;
 }
 
 }
