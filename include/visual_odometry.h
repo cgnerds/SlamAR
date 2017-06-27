@@ -40,7 +40,7 @@ public:
 	int level_pyramid_;   // number of pyramid levels
 	float match_ratio_;   // ratio for selecting good matches
 	int max_num_lost_;    // max number of continuous lost times
-	int min_inliers;      // minimum inliers
+	int min_inliers_;      // minimum inliers
 
 	double key_frame_min_rot;   // minimal rotation of two key-frames
 	double key_frame_min_trans; // minimal translations of two key-frames
