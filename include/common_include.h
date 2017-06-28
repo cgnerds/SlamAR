@@ -1,5 +1,5 @@
 #ifndef COMMON_INCLUDE_H
-#define	COMMON_INCLUDE_H
+#define COMMON_INCLUDE_H
 
 // define the commonly included file to avoid a long include list
 // for Eigen
@@ -10,7 +10,9 @@ using Eigen::Vector3d;
 
 // for Sophus
 #include <sophus/se3.h>
+#include <sophus/so3.h>
 using Sophus::SE3;
+using Sophus::SO3;
 
 // for OpenCV
 #include <opencv2/core/core.hpp>
