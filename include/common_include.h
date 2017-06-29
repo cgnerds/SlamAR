@@ -27,6 +27,6 @@ using cv::Mat;
 #include <set>
 #include <unordered_map>
 #include <map>
-using namespace std;
 
+using namespace std;
 #endif // !COMMON_INCLUDE_H

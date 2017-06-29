@@ -19,8 +19,9 @@ class VisualOdometry
 		LOST
 	};
 
-	VOState state_;   // current VO status
-	Map::Ptr map_;	// map with all frames and map points
+	VOState  state_;  // current VO status
+	Map::Ptr map_;	  // map with all frames and map points
+
 	Frame::Ptr ref_;  // reference frame
 	Frame::Ptr curr_; // current frame
 
@@ -29,10 +30,10 @@ class VisualOdometry
 	vector<cv::KeyPoint> keypoints_curr_; // keypoints in current frame
 	Mat descriptors_curr_;				  // descriptor in current frame
 	Mat descriptors_ref_;				  // descriptor in reference frame
-	vector<cv::DMatch> feature_matches_;
+	vector<cv::DMatch> feature_matches_;  // feature matches
 
 	SE3 T_c_r_estimated_; // the estimated pose of current frame
-	int num_inliers_;	 // number of inliers features in icp
+	int num_inliers_;	  // number of inliers features in icp
 	int num_lost_;		  // number of lost times
 
 	// parameters
@@ -40,11 +41,12 @@ class VisualOdometry
 	double scale_factor_; // scale in image pyramid
 	int level_pyramid_;   // number of pyramid levels
 	float match_ratio_;   // ratio for selecting good matches
-	int max_num_lost_;	// max number of continuous lost times
-	int min_inliers_;	 // minimum inliers
+	int max_num_lost_;	  // max number of continuous lost times
+	int min_inliers_;	  // minimum inliers
 
-	double key_frame_min_rot;   // minimal rotation of two key-frames
-	double key_frame_min_trans; // minimal translations of two key-frames
+	double key_frame_min_rot;      // minimal rotation of two key-frames
+	double key_frame_min_trans;    // minimal translations of two key-frames
+	double map_point_erase_ratio_; // remove map point ratio
 
   public:
 	VisualOdometry();
