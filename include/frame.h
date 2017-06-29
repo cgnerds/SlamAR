@@ -16,7 +16,7 @@ public:
 	SE3                            T_c_w_;         // transform from world to camera
 	Camera::Ptr                    camera_;        // Pinhole RGBD Camera model
 	Mat                            color_, depth_; // color and depth image
-	bool                           is_key_frame;   // whether a key-frame
+	bool                           is_key_frame_;   // whether a key-frame
 
 public: // data members
 	Frame();

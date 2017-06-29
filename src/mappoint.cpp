@@ -9,7 +9,7 @@ MapPoint::MapPoint()
 }
 
 MapPoint::MapPoint(long id, Vector3d position, Vector3d norm)
-	: id_(id), pos_(position), norm_(norm), observed_times_(0)
+	: id_(id), pos_(position), norm_(norm), good_(true), observed_times_(0)
 {
 }
 

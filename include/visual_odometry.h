@@ -31,6 +31,7 @@ class VisualOdometry
 	Mat descriptors_curr_;				  // descriptor in current frame
 	Mat descriptors_ref_;				  // descriptor in reference frame
 	vector<cv::DMatch> feature_matches_;  // feature matches
+	cv::FlannBasedMatcher matcher_flann_; // flann matcher
 
 	SE3 T_c_r_estimated_; // the estimated pose of current frame
 	int num_inliers_;	  // number of inliers features in icp
