@@ -2,9 +2,9 @@ SlamAR -An open source, SLAM based augmented reality software.
 ================================
 Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)](https://travis-ci.org/cgnerds/SlamAR)
 
-# Ubuntu 16.04
-## Eigen
-- sudo apt-get install libeigen3-dev
+# Ubuntu 14.04
+## Dependencies
+- sudo apt-get install build-essential libgtk2.0-dev libvtk5-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev libtbb-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev libeigen3-dev libsuitesparse-dev libboost-all-dev
 
 ## Sophus
 - git clone https://github.com/strasdat/Sophus
@@ -13,26 +13,25 @@ Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)]
 - mkdir build
 - cd build
 - cmake ..
-- make 
+- make -j4
 
 ## OpenCV
-- sudo apt-get install build-essential libgtk2.0-dev libvtk5-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev libtbb-dev
-
-Download OpenCV from the [offical website](https://github.com/opencv/opencv/archive/3.2.0.zip), unzip it and then execute commands as follows.
-- cd OpenCV-3.2.0
+- git clone https://github.com/opencv/opencv.git
+- cd opencv
 - mkdir build
 - cd build
 - cmake ..
-- make 
-- sudo make install
+- make -j4
+- sudo make -j4 install
 
 ## g2o
-- sudo apt-get install libsuitesparse-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev
+- git clone https://github.com/RainerKuemmerle/g2o.git
+- cd g2o
 - mkdir build
 - cd build
 - cmake ..
-- make 
-- sudo make install
+- make -j4
+- sudo make -j4 install
 
 # TUM Dataset
 1. Download a RGB-D sequence from [TUM](http://vision.in.tum.de/data/datasets/rgbd-dataset/download), like fr1/xyz and change the parameter *dataset_dir* in the config/default.yaml file accordingly.  
