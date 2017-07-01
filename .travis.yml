@@ -1,0 +1,31 @@
+sudo: required
+dist: trusty
+language: cpp
+
+os:
+  - linux
+ 
+notifications:
+  email: 
+    recipients:
+      - cgnerds@gmail.com
+    on_success: change # default: change
+    on_failure: always # default: always
+
+compiler:
+  - gcc
+
+before_install:
+  - env | sort
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  
+script: make
+
+# right now only build the master branch
+branches:
+  only:
+    - master
