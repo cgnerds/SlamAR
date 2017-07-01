@@ -22,6 +22,16 @@ install:
   - script/install-deps-linux.sh
 
 before_script:
+  # OpenCV
+  - git clone https://github.com/opencv/opencv.git
+  - cd opencv
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j4
+  - sudo make -j4 install
+  - cd ../..
+  # THIS
   - mkdir build
   - cd build
   - cmake ..
