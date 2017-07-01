@@ -22,6 +22,17 @@ install:
   - sudo apt-get install -qq build-essential libgtk2.0-dev libvtk5-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev libtbb-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev libeigen3-dev libsuitesparse-dev
 
 before_script:
+
+  # Sophus
+  - git clone https://github.com/strasdat/Sophus
+  - cd Sophus
+  - git checkout a621ff
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j4
+  - cd ../..
+
   # OpenCV
   - git clone https://github.com/opencv/opencv.git
   - cd opencv
@@ -31,6 +42,17 @@ before_script:
   - make -j4
   - sudo make -j4 install
   - cd ../..
+
+  # g2o
+  - git clone https://github.com/RainerKuemmerle/g2o.git
+  - cd g2o
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j4
+  - sudo make -j4 install
+  - cd ../..
+
   # THIS
   - mkdir build
   - cd build
