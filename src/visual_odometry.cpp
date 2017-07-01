@@ -230,7 +230,9 @@ bool VisualOdometry::checkKeyFrame()
 	Vector3d trans = d.head<3>();
 	Vector3d rot = d.tail<3>();
 	if (rot.norm() > key_frame_min_rot || trans.norm() > key_frame_min_trans)
+	{
 		return true;
+	}
 	return false;
 }
 

@@ -31,7 +31,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Requirements: 
+# Requirements:
 # sudo apt-get install python-argparse
 
 """
@@ -48,11 +48,11 @@ import numpy
 
 def read_file_list(filename):
     """
-    Reads a trajectory from a text file. 
+    Reads a trajectory from a text file.
     
     File format:
     The file format is "stamp d1 d2 d3 ...", where stamp denotes the time stamp (to be matched)
-    and "d1 d2 d3.." is arbitary data (e.g., a 3D position and 3D orientation) associated to this timestamp. 
+    and "d1 d2 d3.." is arbitary data (e.g., a 3D position and 3D orientation) associated to this timestamp.
     
     Input:
     filename -- File name
@@ -63,14 +63,14 @@ def read_file_list(filename):
     """
     file = open(filename)
     data = file.read()
-    lines = data.replace(","," ").replace("\t"," ").split("\n") 
+    lines = data.replace(","," ").replace("\t"," ").split("\n")
     list = [[v.strip() for v in line.split(" ") if v.strip()!=""] for line in lines if len(line)>0 and line[0]!="#"]
     list = [(float(l[0]),l[1:]) for l in list if len(l)>1]
     return dict(list)
 
 def associate(first_list, second_list,offset,max_difference):
     """
-    Associate two dictionaries of (stamp,data). As the time stamps never match exactly, we aim 
+    Associate two dictionaries of (stamp,data). As the time stamps never match exactly, we aim
     to find the closest match for every input tuple.
     
     Input:
@@ -85,9 +85,9 @@ def associate(first_list, second_list,offset,max_difference):
     """
     first_keys = first_list.keys()
     second_keys = second_list.keys()
-    potential_matches = [(abs(a - (b + offset)), a, b) 
-                         for a in first_keys 
-                         for b in second_keys 
+    potential_matches = [(abs(a - (b + offset)), a, b)
+                         for a in first_keys
+                         for b in second_keys
                          if abs(a - (b + offset)) < max_difference]
     potential_matches.sort()
     matches = []
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     first_list = read_file_list(args.first_file)
     second_list = read_file_list(args.second_file)
 
-    matches = associate(first_list, second_list,float(args.offset),float(args.max_difference))    
+    matches = associate(first_list, second_list,float(args.offset),float(args.max_difference))
 
     if args.first_only:
         for a,b in matches:

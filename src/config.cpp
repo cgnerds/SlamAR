@@ -18,7 +18,9 @@ void Config::setParameterFile(const std::string& filename)
 Config::~Config()
 {
 	if (file_.isOpened())
+	{
 		file_.release();
+	}
 }
 
 shared_ptr<Config> Config::config_ = nullptr;
