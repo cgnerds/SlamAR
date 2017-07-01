@@ -18,6 +18,9 @@ compiler:
 before_install:
   - env | sort
 
+install:
+  - script/install-deps-linux.sh
+
 before_script:
   - mkdir build
   - cd build
