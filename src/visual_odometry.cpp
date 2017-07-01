@@ -168,7 +168,7 @@ void VisualOdometry::poseEstimationPnP()
 
 	// using bundle adjustment to optimize the pose
 	typedef g2o::BlockSolver<g2o::BlockSolverTraits<6, 2>> Block;
-	Block::LinearSoverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
+	Block::LinearSolverType *linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
 	Block* solver_ptr = new Block(linearSolver);
 	g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(solver_ptr);
 	g2o::SparseOptimizer optimizer;
@@ -200,7 +200,7 @@ void VisualOdometry::poseEstimationPnP()
 	optimizer.initializeOptimization();
 	optimizer.optimize(10);
 
-	T_c_w_estimated_ = SE3(
+	T_c_r_estimated_ = SE3(
 		pose->estimate().rotation(),
 		pose->estimate().translation()
 	);

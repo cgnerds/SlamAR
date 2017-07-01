@@ -55,3 +55,5 @@ public:
 };
 
 }
+
+#endif // !G2O_TYPES_H
