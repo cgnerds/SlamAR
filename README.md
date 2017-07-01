@@ -1,6 +1,7 @@
 SlamAR -An open source, SLAM based augmented reality software.
 ================================
-Linux: [![Build Status](https://travis-ci.org/RainerKuemmerle/g2o.svg?branch=master)](https://travis-ci.org/RainerKuemmerle/g2o)
+Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)](https://travis-ci.org/cgnerds/SlamAR)
+
 # Ubuntu 16.04
 ## Eigen
 - sudo apt-get install libeigen3-dev
