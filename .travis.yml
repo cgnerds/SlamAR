@@ -19,7 +19,7 @@ before_install:
   - env | sort
 
 install:
-  - script/install-deps-linux.sh
+  - sudo apt-get install -qq build-essential libgtk2.0-dev libvtk5-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev libtbb-dev qtdeclarative5-dev qt5-qmake libqglviewer-dev libeigen3-dev libsuitesparse-dev
 
 before_script:
   # OpenCV
