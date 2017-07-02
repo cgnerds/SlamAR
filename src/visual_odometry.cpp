@@ -37,8 +37,7 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
 	{
 		state_ = OK;
 		curr_ = ref_ = frame;
-		map_->insertKeyFrame(frame);
-		// extract features from first frame
+		// extract features from first frame and add them into map
 		extractKeyPoints();
 		computeDescriptors();
 		// compute the 3d position of features in ref frame
