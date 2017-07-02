@@ -15,10 +15,10 @@ class MapPoint
 	Vector3d             norm_;		  // normal of viewing direction
 	Mat                  descriptor_; // descriptor for macthing
 
-	list<Frame*> observed_frames_; // frames that can observe this point
+	list<Frame*> observed_frames_; // key-frames that can observe this point
 
-	int observed_times_; // being observed by feature matching algo.
-	int correct_times_;  // being an inliner in pose estimation
+	int matched_times_; // being an inliner in pose estimation
+	int visible_times_; // being visible in current frame
 
 	MapPoint();
 	MapPoint(unsigned long id, 
@@ -28,11 +28,14 @@ class MapPoint
 			 const Mat& descriptor=Mat()
 			 );
 
+    inline cv::Point3f getPositionCV() const {
+		return cv::Point3f(pos_(0, 0), pos_(1, 0), pos_(2, 0));
+	}
 	// factory function
 	static MapPoint::Ptr createMapPoint();
 	static MapPoint::Ptr createMapPoint(
 		const Vector3d &pos_world,
-		const Vector3d &norm_,
+		const Vector3d &norm,
 		const Mat &descriptor,
 		Frame *frame);
 };

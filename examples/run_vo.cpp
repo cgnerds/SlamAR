@@ -94,7 +94,7 @@ int main(int argc, char **argv)
         for(auto& pt:vo->map_->map_points_)
         {
             MapPoint::Ptr p = pt.second;
-            Vector2d pixle = pFrame->camera_->world2pixel(p->pos_, pFrame->T_c_w_);
+            Vector2d pixel = pFrame->camera_->world2pixel(p->pos_, pFrame->T_c_w_);
             cv::circle(img_show, cv::Point2f(pixel(0, 0), pixel(1, 0)), 5, cv::Scalar(0, 255, 0), 2);
         }
 

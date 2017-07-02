@@ -55,7 +55,7 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
 		poseEstimationPnP();
 		if (checkEstimatedPose() == true) // a good estimation
 		{
-			curr_->T_c_w_ = T_c_r_estimated_; // T_c_w = T_c_r*T_r_w
+			curr_->T_c_w_ = T_c_w_estimated_;
 			optimizeMap();
 			num_lost_ = 0;
 			if (checkKeyFrame() == true) // is a key-frame
@@ -106,11 +106,11 @@ void VisualOdometry::featureMatching()
 	// select the candidates in map
 	Mat desp_map;
 	vector<MapPoint::Ptr> candidate;
-	for(auto& allpoints: map_->map_->map_points_ )
+	for(auto& allpoints: map_->map_points_ )
 	{
-		MapPoint::Ptr &p = allpoints.second;
+		MapPoint::Ptr& p = allpoints.second;
 		// check if p in curr frame image
-		if(curr_->isInFrame(p_pos_))
+		if(curr_->isInFrame(p->pos_))
 		{
 			// add to candidate
 			p->visible_times_++;
@@ -248,7 +248,7 @@ bool VisualOdometry::checkKeyFrame()
 
 void VisualOdometry::addKeyFrame()
 {
-	if(map_->keyframe_.empty())
+	if(map_->keyframes_.empty())
 	{
 		// first key-frame, add all 3d points into map
 		for (size_t i = 0; i < keypoints_curr_.size(); ++i)
