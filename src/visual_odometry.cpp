@@ -42,21 +42,21 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
 		extractKeyPoints();
 		computeDescriptors();
 		// compute the 3d position of features in ref frame
-		setRef3DPoints();
+		addKeyFrame();
 		break;
 	}
 	case OK:
 	{
 		curr_ = frame;
+		curr_->T_c_w_ = ref_->T_c_w_;
 		extractKeyPoints();
 		computeDescriptors();
 		featureMatching();
 		poseEstimationPnP();
 		if (checkEstimatedPose() == true) // a good estimation
 		{
-			curr_->T_c_w_ = T_c_r_estimated_ * ref_->T_c_w_; // T_c_w = T_c_r*T_r_w
-			ref_ = curr_;
-			setRef3DPoints();
+			curr_->T_c_w_ = T_c_r_estimated_; // T_c_w = T_c_r*T_r_w
+			optimizeMap();
 			num_lost_ = 0;
 			if (checkKeyFrame() == true) // is a key-frame
 			{
@@ -103,7 +103,22 @@ void VisualOdometry::featureMatching()
 	boost::timer timer;
 	// match desp_ref and desp_curr, use OpenCV's brute force match
 	vector<cv::DMatch> matches;
-	matcher_flann_.match(descriptors_ref_, descriptors_curr_, matches);
+	// select the candidates in map
+	Mat desp_map;
+	vector<MapPoint::Ptr> candidate;
+	for(auto& allpoints: map_->map_->map_points_ )
+	{
+		MapPoint::Ptr &p = allpoints.second;
+		// check if p in curr frame image
+		if(curr_->isInFrame(p_pos_))
+		{
+			// add to candidate
+			p->visible_times_++;
+			candidate.push_back(p);
+			desp_map.push_back(p->descriptor_);
+		}
+	}
+	matcher_flann_.match(desp_map, descriptors_curr_, matches);
 	// select the best matches
 	float min_dis = std::min_element(
 						matches.begin(), matches.end(),
@@ -112,34 +127,18 @@ void VisualOdometry::featureMatching()
 						})
 						->distance;
 
-	feature_matches_.clear();
+	match_3dpts_.clear();
+	match_2dkp_index_.clear();
 	for (cv::DMatch &m : matches)
 	{
 		if (m.distance < max<float>(min_dis * match_ratio_, 30.0))
 		{
-			feature_matches_.push_back(m);
+			match_3dpts_.push_back(candidate[m.queryIdx]);
+			match_2dkp_index_.push_back(m.trainIdx);
 		}
 	}
-	cout << "good matches: " << feature_matches_.size() << endl;
+	cout << "good matches: " << match_3dpts_.size() << endl;
 	cout << "match cost time: " << timer.elapsed() << endl;
-}
-
-void VisualOdometry::setRef3DPoints()
-{
-	// select the features with depth measurements
-	pts_3d_ref_.clear();
-	descriptors_ref_ = Mat();
-	for (size_t i = 0; i < keypoints_curr_.size(); ++i)
-	{
-		double d = ref_->findDepth(keypoints_curr_[i]);
-		if (d > 0)
-		{
-			Vector3d p_cam = ref_->camera_->pixel2camera(
-				Vector2d(keypoints_curr_[i].pt.x, keypoints_curr_[i].pt.y), d);
-			pts_3d_ref_.push_back(cv::Point3f(p_cam(0, 0), p_cam(1, 0), p_cam(2, 0)));
-			descriptors_ref_.push_back(descriptors_curr_.row(i));
-		}
-	}
 }
 
 void VisualOdometry::poseEstimationPnP()
@@ -148,10 +147,13 @@ void VisualOdometry::poseEstimationPnP()
 	vector<cv::Point3f> pts3d;
 	vector<cv::Point2f> pts2d;
 
-	for (cv::DMatch m : feature_matches_)
+	for(int index:match_2dkp_index_)
 	{
-		pts3d.push_back(pts_3d_ref_[m.queryIdx]);
-		pts2d.push_back(keypoints_curr_[m.trainIdx].pt);
+		pts2d.push_back(keypoints_curr_[index].pt);
+	}
+	for(MapPoint::Ptr pt:match_3dpts_)
+	{
+		pts3d.push_back(pt->getPositionCV());
 	}
 
 	Mat K = (cv::Mat_<double>(3, 3) << ref_->camera_->fx_, 0, ref_->camera_->cx_,
@@ -162,7 +164,7 @@ void VisualOdometry::poseEstimationPnP()
 	cv::solvePnPRansac(pts3d, pts2d, K, Mat(), rvec, tvec, false, 100, 4.0, 0.99, inliers);
 	num_inliers_ = inliers.rows;
 	cout << "pnp inliers: " << num_inliers_ << endl;
-	T_c_r_estimated_ = SE3(
+	T_c_w_estimated_ = SE3(
 		SO3(rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0)),
 		Vector3d(tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2.0)));
 
@@ -177,8 +179,8 @@ void VisualOdometry::poseEstimationPnP()
 	g2o::VertexSE3Expmap* pose = new g2o::VertexSE3Expmap();
 	pose->setId(0);
 	pose->setEstimate(g2o::SE3Quat(
-		T_c_r_estimated_.rotation_matrix(),
-		T_c_r_estimated_.translation()
+		T_c_w_estimated_.rotation_matrix(),
+		T_c_w_estimated_.translation()
 	));
 	optimizer.addVertex(pose);
 	
@@ -195,15 +197,20 @@ void VisualOdometry::poseEstimationPnP()
 		edge->setMeasurement(Vector2d(pts2d[index].x, pts2d[index].y));
 		edge->setInformation(Eigen::Matrix2d::Identity());
 		optimizer.addEdge(edge);
+		// set the inlier map points
+		match_3dpts_[index]->matched_times_++;
 	}
 
 	optimizer.initializeOptimization();
 	optimizer.optimize(10);
 
-	T_c_r_estimated_ = SE3(
+	T_c_w_estimated_ = SE3(
 		pose->estimate().rotation(),
 		pose->estimate().translation()
 	);
+
+	cout << "T_c_w_estimated_: " << endl
+		 << T_c_w_estimated_.matrix() << endl;
 }
 
 bool VisualOdometry::checkEstimatedPose()
@@ -214,8 +221,10 @@ bool VisualOdometry::checkEstimatedPose()
 		cout << "reject because inlier is too small: " << num_inliers_ << endl;
 		return false;
 	}
+
 	// if the motion is too large, it is probably wrong
-	Sophus::Vector6d d = T_c_r_estimated_.log();
+	SE3 T_r_c = ref_->T_c_w_ * T_c_w_estimated_.inverse();
+	Sophus::Vector6d d = T_r_c.log();
 	if (d.norm() > 5.0)
 	{
 		cout << "reject because motion is too large: " << d.norm() << endl;
@@ -226,7 +235,8 @@ bool VisualOdometry::checkEstimatedPose()
 
 bool VisualOdometry::checkKeyFrame()
 {
-	Sophus::Vector6d d = T_c_r_estimated_.log();
+	SE3 T_r_c = ref_->T_c_w_ * T_c_w_estimated_.inverse();
+	Sophus::Vector6d d = T_r_c.log();
 	Vector3d trans = d.head<3>();
 	Vector3d rot = d.tail<3>();
 	if (rot.norm() > key_frame_min_rot || trans.norm() > key_frame_min_trans)
@@ -238,7 +248,110 @@ bool VisualOdometry::checkKeyFrame()
 
 void VisualOdometry::addKeyFrame()
 {
-	cout << "adding a key-frame" << endl;
+	if(map_->keyframe_.empty())
+	{
+		// first key-frame, add all 3d points into map
+		for (size_t i = 0; i < keypoints_curr_.size(); ++i)
+		{
+			double d = curr_->findDepth(keypoints_curr_[i]);
+			if(d < 0)
+			{
+				continue;
+			}
+			Vector3d p_world = ref_->camera_->pixel2world(
+				Vector2d(keypoints_curr_[i].pt.x, keypoints_curr_[i].pt.y), curr_->T_c_w_, d);
+			Vector3d n = p_world - ref_->getCamCenter();
+			n.normalize();
+			MapPoint::Ptr map_point = MapPoint::createMapPoint(
+				p_world, n, descriptors_curr_.row(i).clone(), curr_.get());
+			map_->insertMapPoint(map_point);
+		}
+	}
 	map_->insertKeyFrame(curr_);
+	ref_ = curr_;
 }
+
+void VisualOdometry::addMapPoints()
+{
+	// add the new map points into map
+	vector<bool> matched(keypoints_curr_.size(), false);
+	for(int index:match_2dkp_index_)
+	{
+		matched[index] = true;
+	}
+	for (int i = 0; i < keypoints_curr_.size(); ++i)
+	{
+		if(matched[i] == true)
+		{
+			continue;
+		}
+		double d = ref_->findDepth(keypoints_curr_[i]);
+		if(d<0)
+		{
+			continue;
+		}
+		Vector3d p_world = ref_->camera_->pixel2world(
+			Vector2d(keypoints_curr_[i].pt.x, keypoints_curr_[i].pt.y),
+			curr_->T_c_w_, d);
+		Vector3d n = p_world - ref_->getCamCenter();
+		n.normalize();
+		MapPoint::Ptr map_point = MapPoint::createMapPoint(
+			p_world, n, descriptors_curr_.row(i).clone(), curr_.get());
+		map_->insertMapPoint(map_point);
+	}
+}
+
+void VisualOdometry::optimizeMap()
+{
+	// remove the hardly seen and no visible points
+	for (auto iter = map_->map_points_.begin(); iter != map_->map_points_.end();)
+	{
+		if(!curr_->isInFrame(iter->second->pos_))
+		{
+			iter = map_->map_points_.erase(iter);
+			continue;
+		}
+		float match_ratio = float(iter->second->matched_times_) / iter->second->visible_times_;
+		if(match_ratio < map_point_erase_ratio_)
+		{
+			iter = map_->map_points_.erase(iter);
+			continue;
+		}
+
+		double angle = getViewAngle(curr_, iter->second);
+		if(angle > M_PI/6.0f)
+		{
+			iter = map_->map_points_.erase(iter);
+			continue;
+		}
+		if(iter->second->good_ == false)
+		{
+			// TODO try triangulate this map point
+		}
+		iter++;
+	}
+
+	if(match_2dkp_index_.size() < 100)
+	{
+		addMapPoints();
+	}
+	if(map_->map_points_.size() > 100)
+	{
+		// TODO map is too large, remove some one
+		map_point_erase_ratio_ += 0.5;
+	}
+	else
+	{
+		map_point_erase_ratio_ = 0.1;
+	}
+	cout << "map points: " << map_->map_points_.size() << endl;
+}
+
+double VisualOdometry::getViewAngle(Frame::Ptr frame, MapPoint::Ptr point)
+{
+	Vector3d n = point->pos_ - frame->getCamCenter();
+	n.normalize();
+	return acos(n.transpose() * point->norm_);
+}
+
 }
