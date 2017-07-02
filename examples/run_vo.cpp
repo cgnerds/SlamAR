@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     vis.showWidget("Camera", camera_coor);
 
     cout << "read total: " << rgb_files.size() << " entries" << endl;
-    for (int i = 0; i < rgb_files.size(); i++)
+    for (int i = 0; i < rgb_files.size(); ++i)
     {
         Mat color = cv::imread(rgb_files[i]);
         Mat depth = cv::imread(depth_files[i], -1);

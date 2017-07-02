@@ -156,7 +156,8 @@ void VisualOdometry::poseEstimationPnP()
 		pts3d.push_back(pt->getPositionCV());
 	}
 
-	Mat K = (cv::Mat_<double>(3, 3) << ref_->camera_->fx_, 0, ref_->camera_->cx_,
+	Mat K = (cv::Mat_<double>(3, 3) << 
+	         ref_->camera_->fx_, 0, ref_->camera_->cx_,
 			 0, ref_->camera_->fy_, ref_->camera_->cy_,
 			 0, 0, 1);
 
@@ -166,7 +167,7 @@ void VisualOdometry::poseEstimationPnP()
 	cout << "pnp inliers: " << num_inliers_ << endl;
 	T_c_w_estimated_ = SE3(
 		SO3(rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0)),
-		Vector3d(tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2.0)));
+		Vector3d(tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0)));
 
 	// using bundle adjustment to optimize the pose
 	typedef g2o::BlockSolver<g2o::BlockSolverTraits<6, 2>> Block;
@@ -319,7 +320,7 @@ void VisualOdometry::optimizeMap()
 		}
 
 		double angle = getViewAngle(curr_, iter->second);
-		if(angle > M_PI/6.0f)
+		if(angle > M_PI/6.)
 		{
 			iter = map_->map_points_.erase(iter);
 			continue;
@@ -335,10 +336,10 @@ void VisualOdometry::optimizeMap()
 	{
 		addMapPoints();
 	}
-	if(map_->map_points_.size() > 100)
+	if(map_->map_points_.size() > 1000)
 	{
 		// TODO map is too large, remove some one
-		map_point_erase_ratio_ += 0.5;
+		map_point_erase_ratio_ += 0.05;
 	}
 	else
 	{
