@@ -1,5 +1,6 @@
 SlamAR -An open source, SLAM based augmented reality software.
 ================================
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1a7f2c86eac84c2c8b27e2a84f891b21)](https://www.codacy.com/app/cgnerds/SlamAR?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=cgnerds/SlamAR&amp;utm_campaign=Badge_Grade)
 Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)](https://travis-ci.org/cgnerds/SlamAR)
 
 # Ubuntu 14.04
