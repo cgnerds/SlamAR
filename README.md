@@ -34,6 +34,15 @@ Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)]
 - make -j4
 - sudo make -j4 install
 
+## DBoW2
+- git clone https://github.com/dorian3d/DBoW2.git
+- cd DBoW2
+- mkdir build
+- cd build
+- cmake ..
+- make -j4
+- sudo make -j4 install
+
 # TUM Dataset
 1. Download a RGB-D sequence from [TUM](http://vision.in.tum.de/data/datasets/rgbd-dataset/download), like fr1/xyz and change the parameter *dataset_dir* in the config/default.yaml file accordingly.  
 2. Associate RGB images and depth images using the python script associate.py. We already provide associations for some of the sequences in examples/. You can generate your own associations file executing:
