@@ -34,9 +34,9 @@ Linux: [![Build Status](https://travis-ci.org/cgnerds/SlamAR.svg?branch=master)]
 - make -j4
 - sudo make -j4 install
 
-## DBoW2
-- git clone https://github.com/dorian3d/DBoW2.git
-- cd DBoW2
+## DBow3
+- git clone https://github.com/rmsalinas/DBow3.git
+- cd DBow3
 - mkdir build
 - cd build
 - cmake ..

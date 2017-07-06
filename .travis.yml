@@ -53,9 +53,9 @@ before_script:
   - sudo make -j4 install
   - cd ../..
   
-  # DBoW2
-  - git clone https://github.com/dorian3d/DBoW2.git
-  - cd DBoW2
+  # DBow3
+  - git clone https://github.com/rmsalinas/DBow3.git
+  - cd DBow3
   - mkdir build
   - cd build
   - cmake ..
