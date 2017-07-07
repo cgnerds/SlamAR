@@ -59,8 +59,8 @@ before_script:
   - mkdir build
   - cd build
   - cmake ..
-  - make -j4
-  - sudo make -j4 install
+  - make
+  - sudo make install
 
   # THIS
   - mkdir build
