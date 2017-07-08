@@ -52,16 +52,7 @@ before_script:
   - make -j4
   - sudo make -j4 install
   - cd ../..
-  
-  # DBow3
-  - git clone https://github.com/rmsalinas/DBow3.git
-  - cd DBow3
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-  - sudo make install
-
+ 
   # THIS
   - mkdir build
   - cd build
